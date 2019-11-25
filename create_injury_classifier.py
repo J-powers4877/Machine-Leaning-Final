@@ -3,9 +3,9 @@ import pandas as pd
 ###
 ### Load Data Set
 ###
-path='cs-training.csv'
+path='injured-and-uninjured.csv'
 df=pd.read_csv(
-    'cs-training.csv', 
+    'injured-and-uninjured.csv', 
     sep=',',
     header=0)
 data = df.drop(
@@ -13,7 +13,7 @@ data = df.drop(
     axis=1)
 
 # Drop rows with missing column data
-data = data.dropna()
+#data = data.dropna()
 
 ###
 ### Convert Data Into List Of Dict Records
@@ -33,8 +33,8 @@ df_data = DataFrame(
     df_data,
     columns=feature_names)
     
-outcome_feature = df_data['SeriousDlqin2yrs']
-target_features = df_data.drop('SeriousDlqin2yrs', axis=1)
+outcome_feature = df_data['Injured']
+target_features = df_data.drop('Injured', axis=1)
 
  
 
@@ -62,8 +62,8 @@ X_1, X_2, Y_1, Y_2 = train_test_split(
 ###
 ### Define Classifier
 ###                             
-from sklearn.naive_bayes import GaussianNB
-clf = GaussianNB()
+from sklearn.linear_model import LogisticRegression
+clf = LogisticRegression()
 
 
 ###
@@ -93,5 +93,4 @@ print (matrix)
 ###
 from sklearn.externals import joblib
 joblib.dump(clf, 'model/nb.pkl')
-
 

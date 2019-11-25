@@ -17,16 +17,17 @@ resource_fields = api.model('Resource', {
     'result': fields.String,
 })
 
+from sklearn.feature_extraction import DictVectorizer
+vec = DictVectorizer()
+
 parser = api.parser()
 parser.add_argument(
    'Player', 
-   type=str, 
    required=True, 
    help='Players first and last name, separated by a space.', 
    location='form')
 parser.add_argument(
    'Position', 
-   type=str, 
    required=True, 
    help='Position of the player by acronym: WR, OL, RB, TE, etc.',
    location='form')
@@ -50,26 +51,18 @@ parser.add_argument(
    location='form')
 parser.add_argument(
    'Team', 
-   type=str, 
    required=True, 
    help='Acronym of the players team: LAC, Phi, Den, etc.',
    location='form')
 parser.add_argument(
    'Against', 
-   type=str, 
    required=True, 
    help='Acronym of the team the player was facing.',
    location='form')
-parser.add_argument(
-	'Home_Away',
-	type=int,
-	required=True,
-	help='Whether the team is home or away: 1 for home, 0 for away',
-	location='form')
 
 from flask_restplus import Resource
 @ns.route('/')
-class CreditApi(Resource):
+class injury_api(Resource):
 
    @api.doc(parser=parser)
    @api.marshal_with(resource_fields)
@@ -80,30 +73,26 @@ class CreditApi(Resource):
      return result, 201
 
    def get_result(self, args):
-      debtRatio = args["DebtRatio"]
-      monthlyIncome = args["MonthlyIncome"]
-      dependents = args["NumberOfDependents"]
-      openCreditLinesAndLoans = args["NumberOfOpenCreditLinesAndLoans"]
-      pastDue30Days = args["NumberOfTime30-59DaysPastDueNotWorse"]
-      pastDue60Days = args["NumberOfTime60-89DaysPastDueNotWorse"]
-      pastDue90Days = args["NumberOfTimes90DaysLate"]
-      realEstateLoansOrLines = args["NumberRealEstateLoansOrLines"]
-      unsecuredLines = args["RevolvingUtilizationOfUnsecuredLines"]
-      age = args["age"] 
-
+      player = args["Player"]
+      position = args["Position"]
+      age = args["Age"]
+      height = args["Height"]
+      weight = args["Weight"]
+      team = args["Team"]
+      against = args["Against"]
+	  
       from pandas import DataFrame
       df = DataFrame([[
-         debtRatio,
-         monthlyIncome,
-         dependents,
-         openCreditLinesAndLoans,
-         pastDue30Days,
-         pastDue60Days,
-         pastDue90Days,
-         realEstateLoansOrLines,
-         unsecuredLines,
-         age
+         player,
+         position,
+         age,
+         height,
+         weight,
+         team,
+         against,
+
       ]])
+      df = vec.fit_transform(df).toarray()
 
       from sklearn.externals import joblib
       clf = joblib.load('model/nb.pkl');
