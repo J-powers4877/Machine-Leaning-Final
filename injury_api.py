@@ -17,9 +17,6 @@ resource_fields = api.model('Resource', {
     'result': fields.String,
 })
 
-from sklearn.feature_extraction import DictVectorizer
-vec = DictVectorizer()
-
 parser = api.parser()
 parser.add_argument(
    'Player', 
@@ -92,7 +89,6 @@ class injury_api(Resource):
          against,
 
       ]])
-      df = vec.fit_transform(df).toarray()
 
       from sklearn.externals import joblib
       clf = joblib.load('model/nb.pkl');
