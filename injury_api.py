@@ -91,9 +91,11 @@ class injury_api(Resource):
       ]])
 
       from sklearn.externals import joblib
-      clf = joblib.load('model/nb.pkl');
+      #clf = joblib.load('model/nb.pkl');
+      
+      best_model = joblib.load('model/model_nb.pkl')
 
-      result = clf.predict(df)
+      result = best_model.predict(df)
       if(result[0] == 1.0): 
          result = "deny" 
       else: 
